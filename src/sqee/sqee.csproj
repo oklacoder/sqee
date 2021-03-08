@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Title>Simple Query Enhancer for Elasticsearch</Title>
+    <Description></Description>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="nest" Version="7.11.1" />
+  </ItemGroup>
+
+</Project>
