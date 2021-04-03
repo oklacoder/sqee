@@ -50,6 +50,27 @@ namespace sqee.tests
         }
 
         [Fact]
+        public void CanGetCollectionSchema()
+        {
+            var cluster = TestUtil.Cluster;
+
+            var config = TestUtil.CollectionConfig;
+
+            cluster.TryAddCollection(config, out var collection);
+
+            var schema = collection.Schema;
+            var f = new CollectionField("Test Field", "Test Type", null, null, null, null);
+            schema.AddField(f);
+
+            var canUpdate = cluster.TryUpdateCollectionSchema(collection.CollectionName, schema, out var msgs);
+
+            Assert.True(canUpdate);
+            Assert.Equal(cluster.Collections.FirstOrDefault().Schema.Fields.FirstOrDefault().Name, f.Name);
+
+            Assert.NotNull(schema);
+        }
+
+        [Fact]
         public void CanUpdateCollectionSchema()
         {
             var cluster = TestUtil.Cluster;
