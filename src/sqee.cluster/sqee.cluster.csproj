@@ -1,7 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <Title>Simple Query Enhancer for Elasticsearch - Cluster Management</Title>
+    <Description>sqee.cluser, a cluster management framework for Elasticsearch that compliments the sqee querying library</Description>
+    <TargetFrameworks>netstandard2.1;netcoreapp3.1;net5.0;</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <PackageIcon></PackageIcon>
+    <PackageIconUrl />
+    <Authors>oklacoder</Authors>
+    <Company></Company>
+    <RepositoryUrl>https://github.com/oklacoder/sqee</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/oklacoder/sqee</PackageProjectUrl>
+    <PackageTags>sqee elasticsearch</PackageTags>
+    <PackageLicenseFile>LICENSE.TXT</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
