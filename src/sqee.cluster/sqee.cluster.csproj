@@ -24,4 +24,11 @@
     <ProjectReference Include="..\sqee\sqee.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\LICENSE.TXT">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
 </Project>
