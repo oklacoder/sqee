@@ -12,6 +12,7 @@ env:
   SEMVER: '0.0.1'
   BRANCH: ''
   VERSION: ''
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 jobs:
   build:

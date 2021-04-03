@@ -13,6 +13,7 @@ env:
   SUFFIX: 'beta'
   BRANCH: ''
   VERSION: ''
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 jobs:
   build:
