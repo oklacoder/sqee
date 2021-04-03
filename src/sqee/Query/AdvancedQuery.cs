@@ -13,30 +13,22 @@ namespace sqee
         private AdvancedQueryCriteria<T> _criteria;
         public IQueryCriteria<T> Criteria => _criteria;
 
-        public IConnection Connection { get; }
-
         public AdvancedQuery(
-            AdvancedQueryCriteria<T> criteria,
-            IConnection connection)
+            AdvancedQueryCriteria<T> criteria)
         {
             _criteria = criteria;
-            Connection = connection;
         }
 
-        public IQueryResults<T> Execute()
+        public IQueryResults<T> Execute(Nest.ElasticClient client)
         {
-            var c = Connection.Client;
-
-            var results = c.Search<T>(_criteria.GetSearchDescriptor());
+            var results = client.Search<T>(_criteria.GetSearchDescriptor());
 
             return new AdvancedQueryResults<T>(results);
         }
 
-        public async Task<IQueryResults<T>> ExecuteAsync()
+        public async Task<IQueryResults<T>> ExecuteAsync(Nest.ElasticClient client)
         {
-            var c = Connection.Client;
-
-            var results = await c.SearchAsync<T>(_criteria.GetSearchDescriptor());
+            var results = await client.SearchAsync<T>(_criteria.GetSearchDescriptor());
 
             return new AdvancedQueryResults<T>(results);
         }

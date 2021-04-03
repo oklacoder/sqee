@@ -10,9 +10,8 @@ namespace sqee
         where T : class, IDocument
     {
         public IQueryCriteria<T> Criteria { get; }
-        public IConnection Connection { get; }
 
-        public IQueryResults<T> Execute();
-        public Task<IQueryResults<T>> ExecuteAsync();
+        public IQueryResults<T> Execute(Nest.ElasticClient client);
+        public Task<IQueryResults<T>> ExecuteAsync(Nest.ElasticClient client);
     }
 }

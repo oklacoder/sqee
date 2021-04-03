@@ -19,11 +19,10 @@ namespace sqee.tests
         {
             var c = new Nest.ElasticClient(new Uri("http://localhost:9200"));
 
-            var conn = new DefaultConnection(c);
             var criteria = new SimpleQueryCriteria<SampleResult>("", new[] { SampleIndex });
-            var query = new SimpleQuery<SampleResult>(criteria, conn);
+            var query = new SimpleQuery<SampleResult>(criteria);
 
-            var results = query.Execute();
+            var results = query.Execute(c);
             Assert.True(results != null);
         }
 
@@ -32,11 +31,10 @@ namespace sqee.tests
         {
             var c = new Nest.ElasticClient(new Uri("http://localhost:9200"));
 
-            var conn = new DefaultConnection(c);
             var criteria = new SimpleQueryCriteria<SampleResult>("", new[] { SampleIndex });
-            var query = new SimpleQuery<SampleResult>(criteria, conn);
+            var query = new SimpleQuery<SampleResult>(criteria);
 
-            var results = query.ExecuteAsync().Result;
+            var results = query.ExecuteAsync(c).Result;
             Assert.True(results != null);
         }
 
@@ -46,12 +44,10 @@ namespace sqee.tests
             var c = new Nest.ElasticClient(new Uri("http://localhost:9200"));
 
             const int _take = 25;
-
-            var conn = new DefaultConnection(c);
             var criteria = new SimpleQueryCriteria<SampleResult>("", new[] { SampleIndex }, 0, _take);
-            var query = new SimpleQuery<SampleResult>(criteria, conn);
+            var query = new SimpleQuery<SampleResult>(criteria);
 
-            var results = query.Execute();
+            var results = query.Execute(c);
             Assert.Equal(25, results.Documents.Count());
         }
         [Fact]
@@ -61,15 +57,14 @@ namespace sqee.tests
 
             const int _take = 25;
 
-            var conn = new DefaultConnection(c);
             var criteria = new SimpleQueryCriteria<SampleResult>("", new[] { SampleIndex }, 0, _take);
             var criteria2 = new SimpleQueryCriteria<SampleResult>("", new[] { SampleIndex }, 1, _take);
-            var query = new SimpleQuery<SampleResult>(criteria, conn);
-            var query2 = new SimpleQuery<SampleResult>(criteria2, conn);
+            var query = new SimpleQuery<SampleResult>(criteria);
+            var query2 = new SimpleQuery<SampleResult>(criteria2);
 
 
-            var results = query.Execute();
-            var results2 = query2.Execute();
+            var results = query.Execute(c);
+            var results2 = query2.Execute(c);
 
             var r = results.Documents.ElementAt(1) as SampleResult;
             var r2 = results2.Documents.ElementAt(0) as SampleResult;
@@ -87,11 +82,10 @@ namespace sqee.tests
 
             var sort = new[] { new DefaultSortField("order_id", true, 0) };
 
-            var conn = new DefaultConnection(c);
             var criteria = new SimpleQueryCriteria<SampleResult>("", new[] { SampleIndex }, 0, _take, sort);
-            var query = new SimpleQuery<SampleResult>(criteria, conn);
+            var query = new SimpleQuery<SampleResult>(criteria);
 
-            var results = query.Execute();
+            var results = query.Execute(c);
 
             var actualFirst = results.Documents.FirstOrDefault() as SampleResult;
             var intendedFirst = results.Documents.OrderBy(x => (x as SampleResult)?.OrderId).FirstOrDefault() as SampleResult;

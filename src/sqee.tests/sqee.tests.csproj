@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\sqee\sqee.csproj" />
+    <ProjectReference Include="..\sqee.cluster\sqee.cluster.csproj" />
   </ItemGroup>
 
 </Project>

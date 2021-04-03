@@ -13,32 +13,25 @@ namespace sqee
         private SimpleQueryCriteria<T> _criteria;
         public IQueryCriteria<T> Criteria => _criteria;
 
-        public IConnection Connection { get; }
 
-        public IQueryResults<T> Execute()
+        public IQueryResults<T> Execute(Nest.ElasticClient client)
         {
-            var c = Connection.Client;
-
-            var results = c.Search<T>(Criteria.GetSearchDescriptor());
+            var results = client.Search<T>(Criteria.GetSearchDescriptor());
 
             return new SimpleQueryResults<T>(results);
         }
 
-        public async Task<IQueryResults<T>> ExecuteAsync()
+        public async Task<IQueryResults<T>> ExecuteAsync(Nest.ElasticClient client)
         {
-            var c = Connection.Client;
-
-            var results = await c.SearchAsync<T>(Criteria.GetSearchDescriptor());
+            var results = await client.SearchAsync<T>(Criteria.GetSearchDescriptor());
 
             return new SimpleQueryResults<T>(results);
         }
 
         public SimpleQuery(
-            SimpleQueryCriteria<T> criteria,
-            IConnection connection)
+            SimpleQueryCriteria<T> criteria)
         {
             _criteria = criteria;
-            Connection = connection;
         }
     }
 }

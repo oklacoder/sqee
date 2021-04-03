@@ -8,6 +8,8 @@ namespace sqee
 {
     public interface IDocument
     {
-
+        string Id { get; }
+        string CollectionId { get; }
+        string Type { get; }
     }
 }

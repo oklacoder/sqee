@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -12,76 +10,66 @@ namespace sqee.tests
     {
 
         [Fact]
-        public void AdvancedQuery_CanExecute()
+        public void CanExecute()
         {
             var c = TestUtil.Client;
 
-            var conn = new DefaultConnection(c);
             var criteria = new AdvancedQueryCriteria<SampleResult>(
                 TestUtil.SampleIndices);
             var query = new AdvancedQuery<SampleResult>(
-                criteria,
-                conn);
+                criteria);
 
-            var results = query.Execute();
+            var results = query.Execute(c);
             Assert.True(results != null);
             Assert.NotEmpty(results.Documents);
         }
         [Fact]
-        public async void AdvancedQuery_CanExecuteAsync()
+        public async void CanExecuteAsync()
         {
             var c = TestUtil.Client;
 
-            var conn = new DefaultConnection(c);
             var criteria = new AdvancedQueryCriteria<SampleResult>(
                 TestUtil.SampleIndices);
             var query = new AdvancedQuery<SampleResult>(
-                criteria,
-                conn);
+                criteria);
 
-            var results = await query.ExecuteAsync();
+            var results = await query.ExecuteAsync(c);
             Assert.True(results != null);
         }
         [Fact]
-        public void AdvancedQuery_CriteriaWorksCorrectly_Take()
+        public void CriteriaWorksCorrectly_Take()
         {
             var c = TestUtil.Client;
 
             const int _take = 25;
 
-            var conn = new DefaultConnection(c);
             var criteria = new AdvancedQueryCriteria<SampleResult>(
                 TestUtil.SampleIndices,
                 take: _take);
             var query = new AdvancedQuery<SampleResult>(
-                criteria,
-                conn);
+                criteria);
 
-            var results = query.Execute();
+            var results = query.Execute(c);
             Assert.Equal(25, results.Documents.Count());
         }
         [Fact]
-        public void AdvancedQuery_CriteriaWorksCorrectly_Skip()
+        public void CriteriaWorksCorrectly_Skip()
         {
             var c = TestUtil.Client;
-
-            var conn = new DefaultConnection(c);
 
             var criteria = new AdvancedQueryCriteria<SampleResult>(
                 TestUtil.SampleIndices,
                 skip: 0);
             var query = new AdvancedQuery<SampleResult>(
-                criteria,
-                conn);
+                criteria);
             var criteria2 = new AdvancedQueryCriteria<SampleResult>(
                 TestUtil.SampleIndices,
                 skip: 1);
             var query2 = new AdvancedQuery<SampleResult>(
-                criteria2,
-                conn);
+                criteria2);
 
-            var results = query.Execute();
-            var results2 = query2.Execute();
+            var results = query.Execute(c);
+            var results2 = query2.Execute(c);
 
             var r = results.Documents.ElementAt(1) as SampleResult;
             var r2 = results2.Documents.ElementAt(0) as SampleResult;
@@ -90,22 +78,19 @@ namespace sqee.tests
 
         }
         [Fact]
-        public void AdvancedQuery_CriteriaWorksCorrectly_Sort()
+        public void CriteriaWorksCorrectly_Sort()
         {
             var c = TestUtil.Client;
 
             var sort = new[] { new DefaultSortField("order_id", true, 0) };
 
-            var conn = new DefaultConnection(c);
-
             var criteria = new AdvancedQueryCriteria<SampleResult>(
                 TestUtil.SampleIndices,
                 sort);
             var query = new AdvancedQuery<SampleResult>(
-                criteria,
-                conn);
+                criteria);
 
-            var results = query.Execute();
+            var results = query.Execute(c);
 
             var actualFirst = results.Documents.FirstOrDefault() as SampleResult;
             var intendedFirst = results.Documents.OrderBy(x => (x as SampleResult)?.OrderId).FirstOrDefault() as SampleResult;
@@ -113,18 +98,16 @@ namespace sqee.tests
             Assert.Equal(actualFirst.OrderId, intendedFirst.OrderId);
         }
         [Fact]
-        public void AdvancedQuery_ReturnsAllFieldsByDefault()
+        public void ReturnsAllFieldsByDefault()
         {
             var c = TestUtil.Client;
 
-            var conn = new DefaultConnection(c);
             var criteria = new AdvancedQueryCriteria<SampleResult>(
                 TestUtil.SampleIndices);
             var query = new AdvancedQuery<SampleResult>(
-                criteria,
-                conn);
+                criteria);
 
-            var results = query.Execute();
+            var results = query.Execute(c);
 
             var hasValues = TestUtil.DoAllTheseFieldsHaveValues(
                 results.Documents.FirstOrDefault(),
@@ -133,21 +116,19 @@ namespace sqee.tests
             Assert.True(hasValues);
         }
         [Fact]
-        public void AdvancedQuery_ReturnsOnlySpecifiedFields()
+        public void ReturnsOnlySpecifiedFields()
         {
             var c = TestUtil.Client;
 
             const string fieldToUse = "customer_full_name";//nameof(SampleResult.CustomerFullName);// 
 
-            var conn = new DefaultConnection(c);
             var criteria = new AdvancedQueryCriteria<SampleResult>(
                 TestUtil.SampleIndices,
                 returnFields: new[] { new DefaultReturnField(fieldToUse) });
             var query = new AdvancedQuery<SampleResult>(
-                criteria,
-                conn);
+                criteria);
 
-            var results = query.Execute();
+            var results = query.Execute(c);
 
             var hasValues = TestUtil.DoOnlyTheseFieldsHaveValues(
                 results.Documents.FirstOrDefault(),
@@ -156,18 +137,16 @@ namespace sqee.tests
             Assert.True(hasValues);
         }
         [Fact]
-        public void AdvancedQuery_ReturnsNoFieldsWhenEmptySpecified()
+        public void ReturnsNoFieldsWhenEmptySpecified()
         {
             var c = TestUtil.Client;
 
-            var conn = new DefaultConnection(c);
             var criteria = new AdvancedQueryCriteria<SampleResult>(
                 TestUtil.SampleIndices);
             var query = new AdvancedQuery<SampleResult>(
-                criteria,
-                conn);
+                criteria);
 
-            var results = query.Execute();
+            var results = query.Execute(c);
 
             var hasValues = TestUtil.DoAllTheseFieldsHaveValues(
                 results.Documents.FirstOrDefault(),
@@ -176,13 +155,11 @@ namespace sqee.tests
             Assert.True(hasValues);
         }
         [Fact]
-        public void AdvancedQuery_ReturnsAllRecordsWhenNoFilterSpecified()
+        public void ReturnsAllRecordsWhenNoFilterSpecified()
         {
             var c = TestUtil.Client;
 
             const int expectedTotal = 4675;
-
-            var conn = new DefaultConnection(c);
 
             var criteria = new AdvancedQueryCriteria<SampleResult>(
                 TestUtil.SampleIndices,
@@ -190,22 +167,19 @@ namespace sqee.tests
                 null,
                 null);
             var query = new AdvancedQuery<SampleResult>(
-                criteria,
-                conn);
+                criteria);
 
-            var results = query.Execute();
+            var results = query.Execute(c);
 
             Assert.Equal(expectedTotal, results.Total);
         }
         [Fact]
-        public void AdvancedQuery_ReturnsOnlyMatchingRecordsWhenFilterSpecified_AnyWord()
+        public void ReturnsOnlyMatchingRecordsWhenFilterSpecified_AnyWord()
         {
             var c = TestUtil.Client;
 
             const string valToMatch = "Basic";
             var filter = new DefaultFilterField(DefaultComparator.AnyWord, valToMatch, "products.product_name");
-
-            var conn = new DefaultConnection(c);
 
             var criteria = new AdvancedQueryCriteria<SampleResult>(
                 TestUtil.SampleIndices,
@@ -213,10 +187,9 @@ namespace sqee.tests
                 null,
                 new[] { filter });
             var query = new AdvancedQuery<SampleResult>(
-                criteria,
-                conn);
+                criteria);
 
-            var results = query.Execute();
+            var results = query.Execute(c);
 
             var all = results.Documents.All(
                 x => x.Products.Any(
@@ -225,14 +198,12 @@ namespace sqee.tests
             Assert.True(all);
         }
         [Fact]
-        public void AdvancedQuery_ReturnsOnlyMatchingRecordsWhenFilterSpecified_Equal()
+        public void ReturnsOnlyMatchingRecordsWhenFilterSpecified_Equal()
         {
             var c = TestUtil.Client;
 
             const string valToMatch = "Eddie";
             var filter = new DefaultFilterField(DefaultComparator.Equal, valToMatch, "customer_first_name");
-
-            var conn = new DefaultConnection(c);
 
             var criteria = new AdvancedQueryCriteria<SampleResult>(
                 TestUtil.SampleIndices,
@@ -240,10 +211,9 @@ namespace sqee.tests
                 null,
                 new[] { filter });
             var query = new AdvancedQuery<SampleResult>(
-                criteria,
-                conn);
+                criteria);
 
-            var results = query.Execute();
+            var results = query.Execute(c);
 
             var all = results.Documents.All(x => x.CustomerFirstName == valToMatch);
             
@@ -251,42 +221,39 @@ namespace sqee.tests
             Assert.True(all);            
         }
         [Fact]
-        public void AdvancedQuery_ReturnsBucketsForSpecifiedFields()
+        public void ReturnsBucketsForSpecifiedFields()
         {
             var c = TestUtil.Client;
 
             var b = new[] { new DefaultBucketField("manufacturer.keyword") };
 
-            var conn = new DefaultConnection(c);
             var criteria = new AdvancedQueryCriteria<SampleResult>(
                 TestUtil.SampleIndices,
                 bucketFields: b);
             var query = new AdvancedQuery<SampleResult>(
-                criteria,
-                conn);
+                criteria);
 
-            var results = query.Execute();
+            var results = query.Execute(c);
             Assert.True(results != null);
             Assert.NotEmpty(results.Documents);
             Assert.NotEmpty((results as AdvancedQueryResults<SampleResult>)?.Buckets);
         }
         [Fact]
-        public void AdvancedQuery_ReturnsBucketsForSpecifiedFieldsButNoDocumentsWhenZeroPageSize()
+        public void ReturnsBucketsForSpecifiedFieldsButNoDocumentsWhenZeroPageSize()
         {
             var c = TestUtil.Client;
 
             var b = new[] { new DefaultBucketField("manufacturer.keyword") };
 
-            var conn = new DefaultConnection(c);
+            
             var criteria = new AdvancedQueryCriteria<SampleResult>(
                 TestUtil.SampleIndices,
                 bucketFields: b,
                 take: 0);
             var query = new AdvancedQuery<SampleResult>(
-                criteria,
-                conn);
+                criteria);
 
-            var results = query.Execute();
+            var results = query.Execute(c);
             Assert.True(results != null);
             Assert.Empty(results.Documents);
             Assert.NotEmpty((results as AdvancedQueryResults<SampleResult>)?.Buckets);
@@ -294,131 +261,20 @@ namespace sqee.tests
 
 
         [Fact]
-        public void AdvancedQuery_ReturnsNoBucketsWhenNoFieldsSpecified()
+        public void ReturnsNoBucketsWhenNoFieldsSpecified()
         {
             var c = TestUtil.Client;
 
-            var conn = new DefaultConnection(c);
+            
             var criteria = new AdvancedQueryCriteria<SampleResult>(
                 TestUtil.SampleIndices);
             var query = new AdvancedQuery<SampleResult>(
-                criteria,
-                conn);
+                criteria);
 
-            var results = query.Execute();
+            var results = query.Execute(c);
             Assert.True(results != null);
             Assert.NotEmpty(results.Documents);
             Assert.Empty((results as AdvancedQueryResults<SampleResult>)?.Buckets);
-        }
-    }
-
-
-    internal static class TestUtil
-    {
-
-        const string SampleIndex = "kibana_sample_data_ecommerce";
-        const string ClusterUrl = "http://localhost:9200";
-        internal static Nest.ElasticClient Client => new Nest.ElasticClient(new Uri(ClusterUrl));
-        internal static string[] SampleIndices => new[] { SampleIndex };
-
-
-        internal static IEnumerable<string> GetObjectFields(object obj)
-        {
-            return obj.GetType().GetProperties().Select(x => x.Name);
-        }
-        internal static bool DoAllTheseFieldsHaveValues(object obj, params string[] fields)
-        {
-            var res = true;
-            var props = obj.GetType().GetProperties();
-
-            foreach(var p in props.Where(x => 
-                fields.Any(z => 
-                    z.Equals(x.Name, StringComparison.OrdinalIgnoreCase))))
-            {
-                var val = p.GetValue(obj)?.ToString();
-                res = res && p.IsPropertyEmpty(val);
-            }
-
-            return res;
-        }
-        internal static bool DoAllTheseFieldsHaveNoValues(object obj, params string[] fields)
-        {
-            var res = true;
-            var props = obj.GetType().GetProperties();
-
-            foreach (var p in props.Where(x =>
-                 fields.Any(z =>
-                     z.Equals(x.Name, StringComparison.OrdinalIgnoreCase))))
-            {
-                var val = p.GetValue(obj)?.ToString();
-                res = res && p.IsPropertyEmpty(val);
-            }
-
-            return res;
-        }
-        internal static bool DoAllButTheseFieldsHaveValues(object obj, params string[] fields)
-        {
-            var res = true;
-            var props = obj.GetType().GetProperties();
-
-            foreach (var p in props.Where(x =>
-                 fields.Any(z =>
-                     !z.Equals(x.Name, StringComparison.OrdinalIgnoreCase))))
-            {
-                var val = p.GetValue(obj)?.ToString();
-                res = res && p.IsPropertyEmpty(val);
-            }
-            foreach (var p in props.Where(x =>
-                 fields.Any(z =>
-                     z.Equals(x.Name, StringComparison.OrdinalIgnoreCase))))
-            {
-                var val = p.GetValue(obj)?.ToString();
-                res = res && p.IsPropertyEmpty(val);
-            }
-
-            return res;
-        }
-        internal static bool DoOnlyTheseFieldsHaveValues(object obj, params string[] fields)
-        {
-            var res = true;
-            var props = obj.GetType().GetProperties();
-
-            foreach (var p in props.Where(x =>
-                 fields.Any(z =>
-                     !z.Equals(x.Name, StringComparison.OrdinalIgnoreCase))))
-            {
-                var val = p.GetValue(obj)?.ToString();
-                res = res && !p.IsPropertyEmpty(val);                
-            }
-            foreach (var p in props.Where(x =>
-                 fields.Any(z =>
-                     z.Equals(x.Name, StringComparison.OrdinalIgnoreCase))))
-            {
-                var val = p.GetValue(obj)?.ToString();
-                res = res && p.IsPropertyEmpty(val);
-            }
-
-            return res;
-        }
-
-        private static bool IsPropertyEmpty(this PropertyInfo p, string val)
-        {
-            var res = true;
-            if (val == null)
-                return false;
-
-            var t = p.PropertyType;
-
-            if (t == typeof(DateTime))
-            {
-                res = DateTime.Parse(val) != DateTime.MinValue;
-            }
-            else if (t == typeof(DateTime?))
-            {
-                res = DateTime.Parse(val) != DateTime.MinValue;
-            }
-
-            return res;
         }
     }
 }

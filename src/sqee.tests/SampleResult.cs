@@ -7,6 +7,13 @@ namespace sqee.tests
     public class SampleResult :
         IDocument
     {
+        [DataMember(Name = "id")]
+        public string Id => OrderId.ToString();
+        [DataMember(Name = "collection_id")]
+        public string CollectionId { get; set; } = "kibana_sample_data_ecommerce";
+
+        
+
         public IEnumerable<string> Category { get; set; }
         public string Currency { get; set; }
         [DataMember(Name = "customer_first_name")]
@@ -41,7 +48,7 @@ namespace sqee.tests
         public int? TotalQuantity { get; set; }
         [DataMember(Name = "total_unique_products")]
         public int? TotalUniqueProducts { get; set; }
-        public string Type { get; set; }
+        public string Type => GetType().FullName;
         public string User { get; set; }
     }
 }
